@@ -122,12 +122,14 @@ CREATE TABLE subscriptions (
 );
 ```
 
-## 🎓 Pricing (Sugestão)
+## 💰 Pricing
 
-- **Free:** 5 consultas/dia
-- **Basic:** R$ 9,90/mês — 500 consultas/dia
-- **Pro:** R$ 29,90/mês — Ilimitado + notificações
-- **Business:** Customizado — Integração API
+| Plano | Preço | Consultas/dia | Histórico | Alertas | Suporte |
+|-------|-------|---------------|-----------|---------|---------|
+| **Free** | R$ 0 | 5 | 7 dias | 2/dia | — |
+| **Basic** | R$ 12,90/mês | 200 | 30 dias | 10/dia | Email |
+| **Pro** | R$ 24,90/mês | Ilimitado | 6 meses | Ilimitado | Prioritário |
+| **Business** | Custom | Ilimitado + API | Completo | Ilimitado | Dedicado |
 
 ## 🤝 Contribuindo
 
