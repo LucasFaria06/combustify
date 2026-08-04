@@ -2,6 +2,7 @@ package com.combustify.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.locationtech.jts.geom.Point;
 import org.springframework.data.annotation.CreatedAt;
 
 import java.time.LocalDateTime;
@@ -22,11 +23,8 @@ public class GasStation {
     @Column(nullable = false, length = 255)
     private String name;
 
-    @Column(nullable = false, precision = 10, scale = 8)
-    private Double latitude;
-
-    @Column(nullable = false, precision = 11, scale = 8)
-    private Double longitude;
+    @Column(nullable = false, columnDefinition = "geometry(Point, 4326)")
+    private Point location;
 
     @Column(nullable = false, length = 100)
     private String city;

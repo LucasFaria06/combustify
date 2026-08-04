@@ -14,12 +14,14 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE INDEX idx_users_email ON users(email);
 
+-- Enable PostGIS extension
+CREATE EXTENSION IF NOT EXISTS postgis;
+
 -- Create gas_stations table
 CREATE TABLE IF NOT EXISTS gas_stations (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(255) NOT NULL,
-    latitude DECIMAL(10, 8) NOT NULL,
-    longitude DECIMAL(11, 8) NOT NULL,
+    location geometry(Point, 4326) NOT NULL,
     city VARCHAR(100) NOT NULL,
     state VARCHAR(100),
     zip_code VARCHAR(20),
@@ -31,7 +33,7 @@ CREATE TABLE IF NOT EXISTS gas_stations (
 );
 
 CREATE INDEX idx_gas_stations_city ON gas_stations(city);
-CREATE INDEX idx_gas_stations_coordinates ON gas_stations(latitude, longitude);
+CREATE INDEX idx_gas_stations_location ON gas_stations USING GIST(location);
 
 -- Create prices table
 CREATE TABLE IF NOT EXISTS prices (
@@ -63,12 +65,12 @@ CREATE TABLE IF NOT EXISTS subscriptions (
 
 CREATE INDEX idx_subscriptions_user_status ON subscriptions(user_id, status);
 
--- Add some initial gas stations for Cuiabá (MVP region)
-INSERT INTO gas_stations (name, latitude, longitude, city, state, is_active)
+-- Add some initial gas stations for São Paulo (MVP region)
+INSERT INTO gas_stations (name, location, city, state, is_active)
 VALUES
-    ('Postos BR - Centro', -15.5939, -56.0982, 'Cuiabá', 'MT', true),
-    ('Ipiranga - Lagoinha', -15.5845, -56.0756, 'Cuiabá', 'MT', true),
-    ('Shell - Barão de Melgaço', -15.6162, -56.1084, 'Cuiabá', 'MT', true),
-    ('Texaco - Av. Getúlio Vargas', -15.5827, -56.0921, 'Cuiabá', 'MT', true),
-    ('Alesp - Centro', -15.5925, -56.0998, 'Cuiabá', 'MT', true)
+    ('Postos BR - Zona Sul', ST_Point(-23.5505, -46.6333, 4326), 'São Paulo', 'SP', true),
+    ('Ipiranga - Avenida Paulista', ST_Point(-23.5615, -46.6559, 4326), 'São Paulo', 'SP', true),
+    ('Shell - Centro', ST_Point(-23.5505, -46.6361, 4326), 'São Paulo', 'SP', true),
+    ('Texaco - Vila Mariana', ST_Point(-23.5902, -46.6449, 4326), 'São Paulo', 'SP', true),
+    ('Alesp - Zona Leste', ST_Point(-23.4545, -46.4794, 4326), 'São Paulo', 'SP', true)
 ON CONFLICT DO NOTHING;
