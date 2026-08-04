@@ -1,0 +1,49 @@
+# Java
+*.class
+*.jar
+*.war
+target/
+.classpath
+.project
+.settings/
+*.iml
+.idea/
+out/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+
+# Node.js
+node_modules/
+dist/
+.next/
+out/
+npm-debug.log
+yarn-error.log
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build
+build/
+*.o
+
+# Logs
+logs/
+*.log
