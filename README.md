@@ -139,12 +139,38 @@ CREATE TABLE subscriptions (
 4. Push: `git push origin feature/sua-feature`
 5. Abra um Pull Request
 
+## 🚀 Desenvolvendo Localmente
+
+```bash
+# Terminal 1: Database + Redis
+docker-compose up
+
+# Terminal 2: Backend
+cd backend
+./mvnw spring-boot:run
+# Backend roda em http://localhost:8080/api
+
+# Terminal 3: Frontend
+cd frontend
+npm install
+npm run dev
+# Frontend roda em http://localhost:3000
+```
+
+Após iniciar, verifique:
+- Backend health: http://localhost:8080/api/health
+- Frontend: http://localhost:3000
+
 ## 📝 Roadmap
 
-### v0.1 (MVP — Agosto 2026)
-- [ ] Backend básico (CRUD)
-- [ ] Frontend básico (listagem de postos)
-- [ ] Coleta crowdsourcing
+### v0.1 (MVP — Agosto 2026) ✅ Em Progresso
+- [x] Backend básico (CRUD + entities)
+- [x] Frontend básico (home + health check)
+- [x] Database schema com Flyway
+- [ ] Endpoints de autenticação (signup/login)
+- [ ] Endpoints de postos (GET/POST)
+- [ ] Endpoints de preços (GET/POST)
+- [ ] Sistema de queries/rate limiting por plano
 
 ### v0.2 (Setembro 2026)
 - [ ] Dashboard admin
