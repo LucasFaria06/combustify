@@ -1,0 +1,92 @@
+[
+  {
+    "name": "Posto BR - Zona Sul",
+    "latitude": -23.5505,
+    "longitude": -46.6333,
+    "city": "São Paulo",
+    "state": "SP",
+    "address": "Av. Paulista, 1000 - São Paulo, SP",
+    "zipCode": "01311-100"
+  },
+  {
+    "name": "Ipiranga - Avenida Paulista",
+    "latitude": -23.5615,
+    "longitude": -46.6559,
+    "city": "São Paulo",
+    "state": "SP",
+    "address": "Av. Paulista, 500 - São Paulo, SP",
+    "zipCode": "01311-100"
+  },
+  {
+    "name": "Shell - Centro",
+    "latitude": -23.5505,
+    "longitude": -46.6361,
+    "city": "São Paulo",
+    "state": "SP",
+    "address": "Rua XV de Novembro, 100 - São Paulo, SP",
+    "zipCode": "01013-001"
+  },
+  {
+    "name": "Texaco - Vila Mariana",
+    "latitude": -23.5902,
+    "longitude": -46.6449,
+    "city": "São Paulo",
+    "state": "SP",
+    "address": "Rua Alameda Santos, 500 - São Paulo, SP",
+    "zipCode": "01418-100"
+  },
+  {
+    "name": "Alesp - Zona Leste",
+    "latitude": -23.4545,
+    "longitude": -46.4794,
+    "city": "São Paulo",
+    "state": "SP",
+    "address": "Av. Salim Farah Maluf, 3000 - São Paulo, SP",
+    "zipCode": "03162-100"
+  },
+  {
+    "name": "Petronas - Zona Oeste",
+    "latitude": -23.5291,
+    "longitude": -46.7525,
+    "city": "São Paulo",
+    "state": "SP",
+    "address": "Estrada de Itapecerica, 1000 - São Paulo, SP",
+    "zipCode": "05858-000"
+  },
+  {
+    "name": "Esso - Zona Norte",
+    "latitude": -23.4273,
+    "longitude": -46.5880,
+    "city": "São Paulo",
+    "state": "SP",
+    "address": "Av. Cangaíba, 1000 - São Paulo, SP",
+    "zipCode": "03071-000"
+  },
+  {
+    "name": "Chevron - Vila Guilherme",
+    "latitude": -23.4710,
+    "longitude": -46.5380,
+    "city": "São Paulo",
+    "state": "SP",
+    "address": "Rua Padre Estêvão Pernet, 500 - São Paulo, SP",
+    "zipCode": "03060-000"
+  },
+  {
+    "name": "Petrobras - Tatuapé",
+    "latitude": -23.4920,
+    "longitude": -46.5640,
+    "city": "São Paulo",
+    "state": "SP",
+    "address": "Av. Radial Leste, 800 - São Paulo, SP",
+    "zipCode": "03050-000"
+  },
+  {
+    "name": "Cosan - Santo Amaro",
+    "latitude": -23.6500,
+    "longitude": -46.7000,
+    "city": "São Paulo",
+    "state": "SP",
+    "address": "Av. Santo Amaro, 2000 - São Paulo, SP",
+    "zipCode": "04750-000"
+  }
+]
