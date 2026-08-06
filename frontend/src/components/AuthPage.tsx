@@ -136,7 +136,7 @@ export function AuthPage({ onAuthSuccess }: AuthPageProps) {
               disabled={loading}
               className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold py-3 rounded-xl hover:shadow-lg hover:shadow-cyan-500/50 disabled:opacity-50 transition-all duration-200 transform hover:scale-105"
             >
-              {loading ? '⏳ Carregando...' : isSignup ? '✨ Criar Conta' : '🚀 Entrar'}
+              {loading ? 'Carregando...' : isSignup ? 'Criar Conta' : 'Entrar'}
             </button>
           </form>
 
@@ -159,7 +159,7 @@ export function AuthPage({ onAuthSuccess }: AuthPageProps) {
 
         {/* Footer Info */}
         <div className="text-center mt-8 text-white/60 text-sm">
-          <p>🔒 Sua segurança é nossa prioridade</p>
+          <p>Sua segurança é nossa prioridade</p>
         </div>
       </div>
     </div>
