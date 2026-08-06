@@ -18,7 +18,7 @@ const fuelConfig: Record<FuelType, { label: string; icon: string; color: string 
 };
 
 export function StationModal({ station, isOpen, onClose }: StationModalProps) {
-  const { prices, loading: pricesLoading, reportPrice } = usePrices();
+  const { prices, reportPrice } = usePrices();
   const [selectedFuel, setSelectedFuel] = useState<FuelType>('GASOLINA');
   const [priceInput, setPriceInput] = useState('');
   const [isReporting, setIsReporting] = useState(false);

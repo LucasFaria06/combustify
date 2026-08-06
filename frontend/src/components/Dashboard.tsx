@@ -1,11 +1,16 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { useAuth } from '@/hooks/useAuth';
 import { useGasStations, GasStation } from '@/hooks/useGasStations';
 import { usePrices } from '@/hooks/usePrices';
-import { Map } from '@/components/Map';
 import { StationModal } from '@/components/StationModal';
+
+const Map = dynamic(() => import('@/components/Map').then(mod => ({ default: mod.Map })), {
+  ssr: false,
+  loading: () => <div className="w-full h-96 bg-gray-200 rounded-lg flex items-center justify-center">Carregando mapa...</div>,
+});
 
 export function Dashboard() {
   const { isAuthenticated, logout } = useAuth();

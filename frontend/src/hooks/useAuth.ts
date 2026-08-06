@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useAuthStore } from '@/store/authStore';
+import { apiCall } from '@/lib/api';
 
 export function useAuth() {
   const token = useAuthStore((state) => state.token);
@@ -8,17 +9,13 @@ export function useAuth() {
 
   const login = useCallback(async (email: string, password: string) => {
     try {
-      const response = await fetch('/api/auth/login', {
+      const data = await apiCall('/auth/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
 
-      if (!response.ok) throw new Error('Login failed');
-
-      const data = await response.json();
-      setToken(data.token);
-      return data.token;
+      setToken(data.accessToken);
+      return data.accessToken;
     } catch (error) {
       console.error('Login error:', error);
       throw error;
@@ -27,13 +24,10 @@ export function useAuth() {
 
   const signup = useCallback(async (email: string, password: string, displayName: string) => {
     try {
-      const response = await fetch('/api/auth/signup', {
+      await apiCall('/auth/signup', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, displayName }),
       });
-
-      if (!response.ok) throw new Error('Signup failed');
 
       await login(email, password);
     } catch (error) {
