@@ -7,10 +7,8 @@ import { useGasStations, GasStation } from '@/hooks/useGasStations';
 import { usePrices } from '@/hooks/usePrices';
 import { StationModal } from '@/components/StationModal';
 
-const Map = dynamic(() => import('@/components/Map').then(mod => ({ default: mod.Map })), {
-  ssr: false,
-  loading: () => <div className="w-full h-96 bg-gray-200 rounded-lg flex items-center justify-center">Carregando mapa...</div>,
-});
+// TODO: Fix Leaflet SSR issue
+const Map = () => <div className="w-full h-96 bg-blue-100 rounded-lg flex items-center justify-center text-gray-600">Mapa será implementado em breve</div>;
 
 export function Dashboard() {
   const { isAuthenticated, logout } = useAuth();
