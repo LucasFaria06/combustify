@@ -47,6 +47,29 @@ combustify/
 └── .gitignore
 ```
 
+## ✅ Status Atual
+
+### Backend
+- ✅ Autenticação JWT funcionando
+- ✅ CRUD de postos com geolocalização (PostGIS)
+- ✅ Reportar e buscar histórico de preços
+- ✅ Testes unitários passando (4/4)
+- ✅ Build Maven sem erros
+
+### Frontend
+- ✅ Mapa interativo com Leaflet
+- ✅ Modal glassmorphism para reportar preços
+- ✅ Login/Signup com validação
+- ✅ Type checking TypeScript sem erros
+- ✅ Build Next.js sem erros
+
+### Testes End-to-End
+- ✅ Signup flow
+- ✅ JWT authentication
+- ✅ Price reporting (POST /api/prices)
+- ✅ Price history (GET /api/prices/history/{id})
+- ✅ Multi-user crowdsourcing
+
 ## 🚀 Como Começar
 
 ### Pré-requisitos
@@ -169,9 +192,13 @@ Após iniciar, verifique:
 - [x] Backend básico (CRUD + entities)
 - [x] Frontend básico (home + health check)
 - [x] Database schema com Flyway
-- [ ] Endpoints de autenticação (signup/login)
-- [ ] Endpoints de postos (GET/POST)
-- [ ] Endpoints de preços (GET/POST)
+- [x] Endpoints de autenticação (signup/login/refresh)
+- [x] Endpoints de postos (GET/POST com geolocalização)
+- [x] Endpoints de preços (GET histórico/POST reportar/POST verificar)
+- [x] Mapa interativo Leaflet com postos de gasolina
+- [x] Modal glassmorphism para reportar preços
+- [x] Autenticação JWT com Spring Security
+- [x] Sistema de crowdsourcing de preços
 - [ ] Sistema de queries/rate limiting por plano
 
 ### v0.2 (Setembro 2026)
