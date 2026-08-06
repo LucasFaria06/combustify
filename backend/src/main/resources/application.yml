@@ -43,7 +43,7 @@ server:
     context-path: /api
 
 jwt:
-  secret: ${JWT_SECRET:your-secret-key-change-this-in-production}
+  secret: ${JWT_SECRET:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/abcdefghijklmnopqrstuvwxyzABCDEFGHIJKL}
   expiration: 86400000
 
 logging:
