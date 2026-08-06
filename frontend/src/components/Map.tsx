@@ -1,60 +1,61 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { GasStation } from '@/hooks/useGasStations';
 
-// Fix Leaflet icon issue
-const defaultIcon = L.icon({
-  iconUrl: '/images/marker-icon.png',
-  iconRetinaUrl: '/images/marker-icon-2x.png',
-  shadowUrl: '/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
-});
-
-L.Marker.prototype.setIcon(defaultIcon);
-
 interface MapProps {
   stations: GasStation[];
   center?: [number, number];
-  onStationClick: (station: GasStation) => void;
-  zoom?: number;
+  onStationClick?: (station: GasStation) => void;
 }
 
-export function Map({ stations, center = [-23.5505, -46.6333], onStationClick, zoom = 12 }: MapProps) {
-  const [isClient, setIsClient] = useState(false);
+export function Map({ stations, center = [-23.5505, -46.6333], onStationClick }: MapProps) {
+  const mapContainer = useRef<HTMLDivElement>(null);
+  const map = useRef<L.Map | null>(null);
+  const markersRef = useRef<{ [key: string]: L.Marker }>({});
 
   useEffect(() => {
-    setIsClient(true);
-  }, []);
+    if (!mapContainer.current || map.current) return;
 
-  if (!isClient) return <div className="w-full h-screen bg-gray-200">Carregando mapa...</div>;
+    map.current = L.map(mapContainer.current).setView(center, 13);
 
-  return (
-    <MapContainer center={center} zoom={zoom} className="w-full h-screen">
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; OpenStreetMap contributors'
-      />
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap',
+      maxZoom: 19,
+    }).addTo(map.current);
 
-      {stations.map((station) => (
-        <Marker
-          key={station.id}
-          position={[station.latitude, station.longitude]}
-          eventHandlers={{
-            click: () => onStationClick(station),
-          }}
-        >
-          <Popup>
-            <div className="text-sm font-semibold">{station.name}</div>
-          </Popup>
-        </Marker>
-      ))}
-    </MapContainer>
-  );
+    return () => {
+      if (map.current) {
+        map.current.remove();
+        map.current = null;
+      }
+    };
+  }, [center]);
+
+  useEffect(() => {
+    if (!map.current) return;
+
+    Object.values(markersRef.current).forEach(marker => marker.remove());
+    markersRef.current = {};
+
+    stations.forEach((station) => {
+      const marker = L.marker([station.latitude, station.longitude], {
+        title: station.name,
+      }).addTo(map.current!);
+
+      marker.bindPopup(`<div><strong>${station.name}</strong><br/>${station.address}</div>`);
+      marker.on('click', () => onStationClick?.(station));
+
+      markersRef.current[station.id] = marker;
+    });
+
+    if (stations.length > 0) {
+      const group = new L.FeatureGroup(Object.values(markersRef.current));
+      map.current.fitBounds(group.getBounds().pad(0.1));
+    }
+  }, [stations, onStationClick]);
+
+  return <div ref={mapContainer} className="w-full h-full rounded-2xl" />;
 }

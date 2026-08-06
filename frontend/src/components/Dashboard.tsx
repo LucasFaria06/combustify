@@ -1,10 +1,16 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { useAuth } from '@/hooks/useAuth';
 import { useGasStations, GasStation } from '@/hooks/useGasStations';
 import { usePrices } from '@/hooks/usePrices';
 import { StationModal } from '@/components/StationModal';
+
+const Map = dynamic(() => import('@/components/Map').then(mod => ({ default: mod.Map })), {
+  ssr: false,
+  loading: () => <div className="w-full h-full bg-gray-200 rounded-2xl flex items-center justify-center">Carregando mapa...</div>,
+});
 
 export function Dashboard() {
   const { isAuthenticated, logout } = useAuth();
@@ -124,40 +130,50 @@ export function Dashboard() {
           </button>
         </div>
 
-        {/* Stations Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {stations.map((station) => (
-            <div
-              key={station.id}
-              onClick={() => handleStationClick(station)}
-              className="group bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 rounded-2xl p-6 cursor-pointer transition-all hover:scale-105 hover:shadow-xl hover:shadow-cyan-500/20"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h3 className="text-lg font-bold text-white group-hover:text-cyan-300 transition">
-                    {station.name}
-                  </h3>
-                  <p className="text-white/60 text-sm">
-                    📍 {station.city}, {station.state}
-                  </p>
-                </div>
-                <span className="text-3xl">⛽</span>
-              </div>
-
-              <p className="text-white/80 text-sm mb-4">
-                {station.address || 'Endereço não disponível'}
-              </p>
-
-              <button className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white py-2 rounded-lg font-medium hover:shadow-lg transition-all">
-                Ver Preços →
-              </button>
-            </div>
-          ))}
+        {/* Map Container */}
+        <div className="h-96 mb-8 rounded-2xl overflow-hidden border border-white/20">
+          <Map stations={stations} onStationClick={handleStationClick} />
         </div>
+
+        {/* Stations Grid */}
+        {stations.length > 0 && (
+          <div>
+            <h2 className="text-xl font-bold text-white mb-6">Postos Próximos</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {stations.map((station) => (
+                <div
+                  key={station.id}
+                  onClick={() => handleStationClick(station)}
+                  className="group bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 rounded-2xl p-6 cursor-pointer transition-all hover:scale-105 hover:shadow-xl hover:shadow-cyan-500/20"
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <h3 className="text-lg font-bold text-white group-hover:text-cyan-300 transition">
+                        {station.name}
+                      </h3>
+                      <p className="text-white/60 text-sm">
+                        📍 {station.city}, {station.state}
+                      </p>
+                    </div>
+                    <span className="text-3xl">⛽</span>
+                  </div>
+
+                  <p className="text-white/80 text-sm mb-4">
+                    {station.address || 'Endereço não disponível'}
+                  </p>
+
+                  <button className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white py-2 rounded-lg font-medium hover:shadow-lg transition-all">
+                    Ver Preços →
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {stations.length === 0 && !loading && (
           <div className="text-center py-12">
-            <p className="text-white/60 text-lg">Nenhum posto encontrado</p>
+            <p className="text-white/60 text-lg">Nenhum posto encontrado. Tente outro local!</p>
           </div>
         )}
       </main>
