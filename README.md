@@ -4,17 +4,18 @@
 
 ## 🎯 MVP Scope
 
-- **Região:** Cuiabá, MT (inicialmente)
+- **Região:** Brasil (iniciando com São Paulo, SP)
 - **Combustíveis:** Gasolina, Diesel, Etanol, GNV
 - **Modelo:** SaaS por assinatura
 - **Coleta de dados:** Crowdsourcing de usuários
+- **Expansão:** Cobertura nacional progressiva
 
 ## 🛠️ Stack
 
 ### Backend
-- **Java 21 LTS + Spring Boot 3.3+**
-- **PostgreSQL 16** para persistência
-- **Redis** para cache (opcional)
+- **Java 17 LTS + Spring Boot 3.3**
+- **PostgreSQL 16 + PostGIS** para persistência e geolocalização
+- **Redis** para cache
 - **JWT** para autenticação
 - **REST API**
 
@@ -50,9 +51,10 @@ combustify/
 
 ### Pré-requisitos
 - Docker & Docker Compose
-- Java 21+
+- Java 17+ (LTS)
 - Node.js 18+
-- PostgreSQL 16
+- PostgreSQL 16 com PostGIS
+- Maven 3.8+
 
 ### Setup Local
 
@@ -76,8 +78,8 @@ npm run dev
 
 Acesse:
 - Frontend: http://localhost:3000
-- Backend API: http://localhost:8080/api
-- Database: localhost:5432
+- Backend API: http://localhost:8081/api
+- Database: localhost:5434
 
 ## 📊 Database Schema (MVP)
 
@@ -147,8 +149,8 @@ docker-compose up
 
 # Terminal 2: Backend
 cd backend
-./mvnw spring-boot:run
-# Backend roda em http://localhost:8080/api
+mvn spring-boot:run
+# Backend roda em http://localhost:8081/api
 
 # Terminal 3: Frontend
 cd frontend
@@ -158,7 +160,7 @@ npm run dev
 ```
 
 Após iniciar, verifique:
-- Backend health: http://localhost:8080/api/health
+- Backend health: http://localhost:8081/api/health
 - Frontend: http://localhost:3000
 
 ## 📝 Roadmap
