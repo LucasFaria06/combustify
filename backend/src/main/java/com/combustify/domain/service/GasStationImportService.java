@@ -5,6 +5,7 @@ import com.combustify.domain.repository.GasStationRepository;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,8 +20,7 @@ public class GasStationImportService {
 
     public GasStationImportService(GasStationRepository gasStationRepository) {
         this.gasStationRepository = gasStationRepository;
-        this.geometryFactory = new GeometryFactory();
-        geometryFactory.setSRID(4326);
+        this.geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
     }
 
     public GasStationImportResult importStations(List<ImportStationRequest> requests) {
@@ -47,7 +47,6 @@ public class GasStationImportService {
         Point location = geometryFactory.createPoint(
                 new Coordinate(request.longitude(), request.latitude())
         );
-        location.setSRID(4326);
 
         GasStation station = GasStation.builder()
                 .name(request.name())

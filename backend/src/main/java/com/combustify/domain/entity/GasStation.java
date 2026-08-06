@@ -3,7 +3,6 @@ package com.combustify.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.locationtech.jts.geom.Point;
-import org.springframework.data.annotation.CreatedAt;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -44,7 +43,6 @@ public class GasStation {
     @Column(name = "verification_count")
     private Integer verificationCount;
 
-    @CreatedAt
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 

@@ -2,7 +2,6 @@ package com.combustify.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedAt;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -23,7 +22,7 @@ public class Subscription {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(nullable = false, length = 50)
+    @Column(name = "plan_name", nullable = false, length = 50)
     @Enumerated(EnumType.STRING)
     private SubscriptionPlan plan;
 
@@ -43,7 +42,6 @@ public class Subscription {
     @Column(name = "external_id", length = 255)
     private String externalId;
 
-    @CreatedAt
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 

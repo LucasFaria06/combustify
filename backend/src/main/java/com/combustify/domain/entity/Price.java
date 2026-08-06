@@ -2,7 +2,6 @@ package com.combustify.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedAt;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -41,7 +40,6 @@ public class Price {
     @Column(name = "verification_count")
     private Integer verificationCount;
 
-    @CreatedAt
     @Column(name = "reported_at", nullable = false, updatable = false)
     private LocalDateTime reportedAt;
 
