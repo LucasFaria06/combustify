@@ -1,51 +1,54 @@
 package com.combustify.api.controller;
 
-import com.combustify.domain.service.GasStationImportService;
-import org.springframework.http.HttpStatus;
+import com.combustify.api.dto.AdminStatsResponse;
+import com.combustify.domain.repository.GasStationRepository;
+import com.combustify.domain.repository.PriceRepository;
+import com.combustify.domain.repository.SubscriptionRepository;
+import com.combustify.domain.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/api/admin")
 public class AdminController {
 
-    private final GasStationImportService gasStationImportService;
+    private final GasStationRepository gasStationRepository;
+    private final PriceRepository priceRepository;
+    private final UserRepository userRepository;
+    private final SubscriptionRepository subscriptionRepository;
 
-    public AdminController(GasStationImportService gasStationImportService) {
-        this.gasStationImportService = gasStationImportService;
+    public AdminController(GasStationRepository gasStationRepository,
+                         PriceRepository priceRepository,
+                         UserRepository userRepository,
+                         SubscriptionRepository subscriptionRepository) {
+        this.gasStationRepository = gasStationRepository;
+        this.priceRepository = priceRepository;
+        this.userRepository = userRepository;
+        this.subscriptionRepository = subscriptionRepository;
     }
 
-    @PostMapping("/import-stations")
-    public ResponseEntity<AdminImportResponse> importStations(
-            @RequestBody List<GasStationImportService.ImportStationRequest> stations,
-            @RequestHeader(value = "X-Admin-Key", required = false) String adminKey) {
+    @GetMapping("/stats")
+    public ResponseEntity<AdminStatsResponse> getStats() {
+        long totalStations = gasStationRepository.count();
+        long totalPrices = priceRepository.count();
+        long totalUsers = userRepository.count();
+        long activeSubscriptions = subscriptionRepository.countByStatus("ACTIVE");
 
-        validateAdminKey(adminKey);
+        LocalDateTime today = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
+        long pricesReportedToday = priceRepository.findByReportedAtAfter(today).size();
 
-        GasStationImportService.GasStationImportResult result = gasStationImportService.importStations(stations);
+        AdminStatsResponse stats = new AdminStatsResponse(
+                totalStations,
+                totalPrices,
+                totalUsers,
+                activeSubscriptions,
+                pricesReportedToday
+        );
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new AdminImportResponse(
-                        "Import concluído",
-                        result.imported(),
-                        result.failed()
-                ));
+        return ResponseEntity.ok(stats);
     }
-
-    private void validateAdminKey(String adminKey) {
-        // Por enquanto, apenas para MVP
-        // Em produção, usar autenticação adequada
-        if (adminKey == null || adminKey.isEmpty()) {
-            throw new IllegalArgumentException("X-Admin-Key header obrigatório");
-        }
-    }
-
-    public record AdminImportResponse(
-            String message,
-            int imported,
-            int failed
-    ) {}
-
 }

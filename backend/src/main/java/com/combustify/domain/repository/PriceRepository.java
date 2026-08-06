@@ -19,4 +19,6 @@ public interface PriceRepository extends JpaRepository<Price, UUID> {
     Optional<Price> findLatestPriceByStationAndFuel(@Param("stationId") UUID stationId, @Param("fuelType") Price.FuelType fuelType);
 
     List<Price> findByStationIdAndReportedAtAfterOrderByReportedAtDesc(UUID stationId, LocalDateTime after);
+
+    List<Price> findByReportedAtAfter(LocalDateTime after);
 }
