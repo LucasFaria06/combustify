@@ -1,19 +1,20 @@
 package com.combustify.api.controller;
 
+import com.combustify.api.dto.PriceResponse;
+import com.combustify.api.dto.ReportPriceRequest;
 import com.combustify.domain.entity.Price;
 import com.combustify.domain.service.PriceService;
-import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/prices")
+@RequestMapping("/api/prices")
 public class PriceController {
 
     private final PriceService priceService;
@@ -22,60 +23,49 @@ public class PriceController {
         this.priceService = priceService;
     }
 
-    @GetMapping("/{stationId}")
-    public ResponseEntity<Map<Price.FuelType, PriceService.PriceDTO>> getPricesByStation(
-            @PathVariable UUID stationId,
-            HttpServletRequest request) {
-
-        UUID userId = extractUserId(request);
-        Map<Price.FuelType, PriceService.PriceDTO> prices = priceService.getPricesByStation(stationId, userId);
-        return ResponseEntity.ok(prices);
-    }
-
-    @GetMapping("/{stationId}/history")
-    public ResponseEntity<List<PriceService.PriceDTO>> getPriceHistory(
-            @PathVariable UUID stationId,
-            HttpServletRequest request) {
-
-        UUID userId = extractUserId(request);
-        List<PriceService.PriceDTO> history = priceService.getPriceHistory(stationId, userId);
-        return ResponseEntity.ok(history);
+    @GetMapping("/history/{stationId}")
+    public ResponseEntity<List<PriceResponse>> getPriceHistory(@PathVariable UUID stationId) {
+        List<Price> prices = priceService.getPriceHistory(stationId);
+        return ResponseEntity.ok(prices.stream()
+                .map(this::toResponse)
+                .toList());
     }
 
     @PostMapping
-    public ResponseEntity<PriceReportResponse> reportPrice(
-            @RequestBody ReportPriceRequest request,
-            HttpServletRequest httpRequest) {
+    public ResponseEntity<PriceResponse> reportPrice(
+            @Valid @RequestBody ReportPriceRequest request,
+            Authentication auth) {
 
-        UUID userId = extractUserId(httpRequest);
-        priceService.reportPrice(request.stationId(), request.fuelType(), request.price(), userId);
+        UUID userId = UUID.fromString(auth.getName());
+        Price price = priceService.reportPrice(
+                request.stationId(),
+                request.fuelType(),
+                request.price(),
+                userId
+        );
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new PriceReportResponse(
-                        "Preço reportado com sucesso",
-                        request.fuelType().toString(),
-                        request.price()
-                ));
+        return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(price));
     }
 
-    private UUID extractUserId(HttpServletRequest request) {
-        UUID userId = (UUID) request.getAttribute("userId");
-        if (userId == null) {
-            throw new IllegalArgumentException("Usuário não autenticado. Envie o token JWT no header Authorization");
-        }
-        return userId;
+    @PostMapping("/{priceId}/verify")
+    public ResponseEntity<Void> verifyPrice(
+            @PathVariable UUID priceId,
+            Authentication auth) {
+
+        UUID userId = UUID.fromString(auth.getName());
+        priceService.verifyPrice(priceId, userId);
+        return ResponseEntity.noContent().build();
     }
 
-    public record ReportPriceRequest(
-            UUID stationId,
-            Price.FuelType fuelType,
-            BigDecimal price
-    ) {}
-
-    public record PriceReportResponse(
-            String message,
-            String fuelType,
-            BigDecimal price
-    ) {}
-
+    private PriceResponse toResponse(Price price) {
+        return new PriceResponse(
+                price.getId(),
+                price.getStation().getId(),
+                price.getFuelType().toString(),
+                price.getPrice(),
+                price.getReportedBy().getId(),
+                price.getVerificationCount(),
+                price.getReportedAt()
+        );
+    }
 }
