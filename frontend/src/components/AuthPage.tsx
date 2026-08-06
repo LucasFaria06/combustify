@@ -44,8 +44,29 @@ export function AuthPage({ onAuthSuccess }: AuthPageProps) {
       <div className="relative z-10">
         {/* Logo Card */}
         <div className="text-center mb-12">
-          <div className="inline-block bg-gradient-to-br from-blue-400 to-cyan-400 p-4 rounded-2xl mb-4">
-            <span className="text-5xl">⛽</span>
+          <div className="inline-block bg-gradient-to-br from-blue-400 to-cyan-400 p-4 rounded-2xl mb-4 shadow-2xl shadow-cyan-500/50">
+            <svg className="w-20 h-20" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              {/* Pump body */}
+              <rect x="30" y="45" width="40" height="35" rx="4" fill="#1F2937" />
+              <rect x="28" y="43" width="44" height="37" rx="6" fill="#374151" opacity="0.5" />
+
+              {/* Pump nozzle */}
+              <rect x="35" y="15" width="30" height="35" rx="3" fill="#DC2626" />
+              <rect x="33" y="13" width="34" height="38" rx="5" fill="#991B1B" opacity="0.4" />
+
+              {/* Nozzle tip */}
+              <circle cx="50" cy="12" r="5" fill="#FCA5A5" />
+
+              {/* Display screen */}
+              <rect x="38" y="52" width="24" height="12" rx="2" fill="#1E293B" />
+              <rect x="40" y="54" width="20" height="8" rx="1" fill="#06B6D4" opacity="0.8" />
+
+              {/* Button */}
+              <rect x="42" y="68" width="16" height="8" rx="1" fill="#0EA5E9" />
+
+              {/* Highlight/3D effect */}
+              <ellipse cx="45" cy="50" rx="8" ry="12" fill="white" opacity="0.15" />
+            </svg>
           </div>
           <h1 className="text-5xl font-black text-white mb-2">Combustify</h1>
           <p className="text-cyan-300 text-lg">Encontre os melhores preços de combustível</p>
