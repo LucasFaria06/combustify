@@ -1,12 +1,13 @@
 package com.combustify.domain.service;
 
+import com.combustify.api.dto.AuthResponse;
+import com.combustify.api.dto.LoginRequest;
+import com.combustify.api.dto.SignupRequest;
 import com.combustify.domain.entity.User;
 import com.combustify.domain.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -22,34 +23,82 @@ public class AuthService {
         this.jwtService = jwtService;
     }
 
-    public User signup(String email, String password, String displayName) {
-        if (userRepository.findByEmail(email).isPresent()) {
+    public AuthResponse signup(SignupRequest request) {
+        if (userRepository.findByEmail(request.email()).isPresent()) {
             throw new IllegalArgumentException("Email já cadastrado");
         }
 
         User user = User.builder()
-                .email(email)
-                .passwordHash(passwordEncoder.encode(password))
-                .displayName(displayName)
+                .email(request.email())
+                .passwordHash(passwordEncoder.encode(request.password()))
+                .displayName(request.displayName())
                 .subscriptionPlan(User.SubscriptionPlan.FREE)
+                .isActive(true)
+                .queriesUsedToday(0)
                 .build();
 
-        return userRepository.save(user);
+        user = userRepository.save(user);
+
+        String accessToken = jwtService.generateToken(user);
+        String refreshToken = generateRefreshToken(user);
+
+        return new AuthResponse(
+                user.getId(),
+                user.getEmail(),
+                user.getDisplayName(),
+                accessToken,
+                refreshToken,
+                user.getSubscriptionPlan().toString(),
+                3600000
+        );
     }
 
-    public String login(String email, String password) {
-        User user = userRepository.findByEmail(email)
+    public AuthResponse login(LoginRequest request) {
+        User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
 
-        if (!passwordEncoder.matches(password, user.getPasswordHash())) {
+        if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {
             throw new IllegalArgumentException("Senha incorreta");
         }
 
+        String accessToken = jwtService.generateToken(user);
+        String refreshToken = generateRefreshToken(user);
+
+        return new AuthResponse(
+                user.getId(),
+                user.getEmail(),
+                user.getDisplayName(),
+                accessToken,
+                refreshToken,
+                user.getSubscriptionPlan().toString(),
+                3600000
+        );
+    }
+
+    public AuthResponse refreshToken(String refreshToken) {
+        String userId = extractUserIdFromRefreshToken(refreshToken);
+        User user = userRepository.findById(java.util.UUID.fromString(userId))
+                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
+
+        String newAccessToken = jwtService.generateToken(user);
+        String newRefreshToken = generateRefreshToken(user);
+
+        return new AuthResponse(
+                user.getId(),
+                user.getEmail(),
+                user.getDisplayName(),
+                newAccessToken,
+                newRefreshToken,
+                user.getSubscriptionPlan().toString(),
+                3600000
+        );
+    }
+
+    private String generateRefreshToken(User user) {
         return jwtService.generateToken(user);
     }
 
-    public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
+    private String extractUserIdFromRefreshToken(String token) {
+        return jwtService.extractUserId(token);
     }
-
 }
