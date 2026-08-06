@@ -45,7 +45,7 @@ export function AuthPage({ onAuthSuccess }: AuthPageProps) {
         {/* Logo Card */}
         <div className="text-center mb-12">
           <div className="inline-block bg-gradient-to-br from-blue-400 to-cyan-400 p-4 rounded-2xl mb-4">
-            <span className="text-5xl">🚗</span>
+            <span className="text-5xl">⛽</span>
           </div>
           <h1 className="text-5xl font-black text-white mb-2">Combustify</h1>
           <p className="text-cyan-300 text-lg">Encontre os melhores preços de combustível</p>
