@@ -9,7 +9,7 @@ services:
       POSTGRES_USER: combustify_user
       POSTGRES_PASSWORD: combustify_pass
     ports:
-      - "5434:5432"
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -17,6 +17,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - combustify-network
 
   redis:
     image: redis:7-alpine
@@ -30,7 +32,51 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - combustify-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: combustify-backend
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/combustify
+      SPRING_DATASOURCE_USERNAME: combustify_user
+      SPRING_DATASOURCE_PASSWORD: combustify_pass
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+      SERVER_PORT: 8081
+      JWT_SECRET: ${JWT_SECRET:-your-secret-key-change-in-production}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - combustify-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: combustify-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8081/api
+      NEXT_PUBLIC_ENV: development
+    depends_on:
+      - backend
+    networks:
+      - combustify-network
 
 volumes:
   postgres_data:
   redis_data:
+
+networks:
+  combustify-network:
+    driver: bridge
