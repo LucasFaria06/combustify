@@ -11,12 +11,13 @@ import java.util.UUID;
 
 @Repository
 public interface SubscriptionRepository extends JpaRepository<Subscription, UUID> {
-    @Query("SELECT s FROM Subscription s WHERE s.user.id = :userId AND s.status = 'ACTIVE' ORDER BY s.startsAt DESC LIMIT 1")
+    @Query("SELECT s FROM Subscription s WHERE s.user.id = :userId AND s.status = com.combustify.domain.entity.Subscription.Status.ACTIVE ORDER BY s.startsAt DESC")
     Optional<Subscription> findActiveByUserId(@Param("userId") UUID userId);
 
     Optional<Subscription> findByUserIdAndStatus(UUID userId, Subscription.Status status);
 
     Optional<Subscription> findByUserId(UUID userId);
 
-    long countByStatus(String status);
+    @Query("SELECT COUNT(s) FROM Subscription s WHERE s.status = :status")
+    long countByStatus(@Param("status") Subscription.Status status);
 }
