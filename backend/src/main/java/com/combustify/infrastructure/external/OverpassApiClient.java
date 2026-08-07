@@ -2,6 +2,7 @@ package com.combustify.infrastructure.external;
 
 import com.combustify.domain.entity.GasStation;
 import com.combustify.domain.repository.GasStationRepository;
+import com.combustify.infrastructure.external.CidadesDataSeeder;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -208,6 +209,45 @@ public class OverpassApiClient {
             log.warn("Erro ao extrair dados de elemento: {}", e.getMessage());
             return null;
         }
+    }
+
+    public Map<String, Object> seedCidadesBrasil() {
+        int totalInserted = 0;
+
+        for (String stateCode : CidadesDataSeeder.CIDADES_POR_ESTADO.keySet()) {
+            List<CidadesDataSeeder.CidadeData> cidades = CidadesDataSeeder.CIDADES_POR_ESTADO.get(stateCode);
+
+            for (CidadesDataSeeder.CidadeData cidade : cidades) {
+                // Gerar 2 postos por cidade
+                String[] brands = {"Shell", "Petrobras", "Ipiranga", "Texaco", "BR"};
+
+                for (int i = 0; i < 2; i++) {
+                    double latVariation = (Math.random() - 0.5) * 0.02;
+                    double lonVariation = (Math.random() - 0.5) * 0.02;
+
+                    Map<String, Object> stationData = Map.of(
+                            "name", brands[(int) (Math.random() * brands.length)] + " - " + cidade.getNome() + " #" + (i + 1),
+                            "latitude", cidade.getLatitude() + latVariation,
+                            "longitude", cidade.getLongitude() + lonVariation,
+                            "city", cidade.getNome(),
+                            "state", stateCode,
+                            "address", "Avenida Principal, " + (100 * (i + 1)),
+                            "zipCode", ""
+                    );
+
+                    if (saveStation(stationData)) {
+                        totalInserted++;
+                    }
+                }
+            }
+
+            log.info("Seeded {} with {} cities", stateCode, cidades.size());
+        }
+
+        return Map.of(
+                "totalSeeded", totalInserted,
+                "status", "Cidades do Brasil seeded successfully"
+        );
     }
 
     public Map<String, Object> seedAllStatesWithTestData() {

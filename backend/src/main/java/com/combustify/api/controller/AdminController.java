@@ -88,4 +88,15 @@ public class AdminController {
                     .body(Map.of("error", e.getMessage()));
         }
     }
+
+    @PostMapping("/seed-stations/cidades-brasil")
+    public ResponseEntity<Map<String, Object>> seedCidadesBrasil() {
+        try {
+            Map<String, Object> result = overpassApiClient.seedCidadesBrasil();
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", e.getMessage()));
+        }
+    }
 }
