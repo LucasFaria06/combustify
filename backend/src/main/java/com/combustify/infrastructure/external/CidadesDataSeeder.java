@@ -1,79 +1,50 @@
 package com.combustify.infrastructure.external;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
+import jakarta.annotation.PostConstruct;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
+@Slf4j
 @Component
 public class CidadesDataSeeder {
 
     // Mapa de estados → cidades com coordenadas
     public static final Map<String, List<CidadeData>> CIDADES_POR_ESTADO = new LinkedHashMap<>();
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    @PostConstruct
+    public void carregarCidades() {
+        try {
+            carregarCidadesDeArquivo("SP", "cidades/sp.json");
+        } catch (Exception e) {
+            log.error("Erro ao carregar cidades de SP: {}", e.getMessage(), e);
+        }
+    }
+
+    private void carregarCidadesDeArquivo(String estado, String caminhoArquivo) throws Exception {
+        ClassPathResource resource = new ClassPathResource(caminhoArquivo);
+        String json = new String(Files.readAllBytes(Paths.get(resource.getURI())), StandardCharsets.UTF_8);
+
+        List<CidadeData> cidades = objectMapper.readValue(json, new TypeReference<List<CidadeData>>() {});
+        CIDADES_POR_ESTADO.put(estado, cidades);
+
+        log.info("Carregadas {} cidades de {} do arquivo {}", cidades.size(), estado, caminhoArquivo);
+    }
+
     static {
-        // SÃO PAULO - 60+ principais cidades
-        CIDADES_POR_ESTADO.put("SP", Arrays.asList(
-            new CidadeData("São Paulo", -23.5505, -46.6333),
-            new CidadeData("Campinas", -22.9068, -47.0610),
-            new CidadeData("Santos", -23.9608, -46.3339),
-            new CidadeData("Ribeirão Preto", -21.1767, -47.8103),
-            new CidadeData("Sorocaba", -23.5006, -47.4567),
-            new CidadeData("Jundiaí", -23.1889, -46.8722),
-            new CidadeData("Piracicaba", -22.7274, -47.6481),
-            new CidadeData("Mauá", -23.6654, -46.4631),
-            new CidadeData("São Bernardo do Campo", -23.6959, -46.5644),
-            new CidadeData("Santo André", -23.6628, -46.5355),
-            new CidadeData("Diadema", -23.6958, -46.6139),
-            new CidadeData("Osasco", -23.5281, -46.7919),
-            new CidadeData("Guarulhos", -23.4569, -46.4833),
-            new CidadeData("São Caetano do Sul", -23.6201, -46.5581),
-            new CidadeData("Carapicuíba", -23.5347, -46.8383),
-            new CidadeData("Bauru", -22.3150, -49.0642),
-            new CidadeData("Araçatuba", -21.2067, -50.4339),
-            new CidadeData("Presidente Prudente", -22.1227, -51.3840),
-            new CidadeData("Araraquara", -21.7964, -48.1756),
-            new CidadeData("São Carlos", -22.0100, -47.8900),
-            new CidadeData("Limeira", -22.5642, -47.4108),
-            new CidadeData("Rio Claro", -22.4145, -47.5608),
-            new CidadeData("Botucatu", -22.8757, -48.4743),
-            new CidadeData("Lins", -21.6724, -49.7506),
-            new CidadeData("Marília", -22.2139, -49.9469),
-            new CidadeData("Franca", -20.5389, -47.4008),
-            new CidadeData("Catanduva", -21.1369, -48.9828),
-            new CidadeData("São José do Rio Preto", -20.8142, -49.3747),
-            new CidadeData("Avaré", -23.1023, -48.9303),
-            new CidadeData("Itapetininga", -23.5906, -48.0510),
-            new CidadeData("Ourinhos", -22.9711, -49.8675),
-            new CidadeData("Tatui", -23.2585, -47.8836),
-            new CidadeData("Salto", -23.1963, -47.2922),
-            new CidadeData("Itu", -23.2649, -47.2972),
-            new CidadeData("Indaiatuba", -23.1815, -47.1847),
-            new CidadeData("Valinhos", -23.0106, -47.0094),
-            new CidadeData("Vinhedo", -23.0070, -47.0195),
-            new CidadeData("Paulínia", -22.7617, -47.1453),
-            new CidadeData("Sumaré", -22.8256, -47.2556),
-            new CidadeData("Hortolândia", -22.8486, -47.2283),
-            new CidadeData("Morungaba", -22.5108, -46.8931),
-            new CidadeData("Monte Mor", -23.0397, -47.3025),
-            new CidadeData("Americana", -22.7392, -47.3303),
-            new CidadeData("Santa Bárbara do Oeste", -22.7417, -47.4123),
-            new CidadeData("Itupeva", -23.0797, -47.1533),
-            new CidadeData("Elias Fausto", -23.1758, -47.3850),
-            new CidadeData("Capivari", -23.0717, -47.5214),
-            new CidadeData("Mogi Guaçu", -22.3686, -46.9147),
-            new CidadeData("Mogi Mirim", -22.4272, -46.8461),
-            new CidadeData("Itapira", -22.4236, -46.8225),
-            new CidadeData("Socorro", -22.6131, -46.3281),
-            new CidadeData("Amparo", -22.7069, -46.7683),
-            new CidadeData("Lindoia", -22.6022, -46.7103),
-            new CidadeData("Monte Alegre do Sul", -22.6556, -46.6839),
-            new CidadeData("Pedreira", -22.7378, -47.3950),
-            new CidadeData("Estiva Gerbi", -22.5767, -47.1542),
-            new CidadeData("Tuiuti", -22.2217, -48.6228),
-            new CidadeData("Fartura", -22.4903, -49.2458)
-        ));
+        // SÃO PAULO será carregado do arquivo via @PostConstruct
 
         // MINAS GERAIS
         CIDADES_POR_ESTADO.put("MG", Arrays.asList(
@@ -208,6 +179,7 @@ public class CidadesDataSeeder {
 
     @Data
     @AllArgsConstructor
+    @NoArgsConstructor
     public static class CidadeData {
         private String nome;
         private Double latitude;
